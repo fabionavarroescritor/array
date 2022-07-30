@@ -1,0 +1,74 @@
+ArrayList<PVector> pontos = new ArrayList<PVector>();
+
+PImage img;
+PGraphics pg;
+
+float t;
+
+void setup() {
+
+  size(1200, 710, P3D);
+  pg = createGraphics(width, height, P3D);
+  pg.smooth(8);
+
+  img = loadImage("bozo3.png");
+  img.resize(width, height);
+}
+
+void draw() {
+
+  t += 0.004;
+
+  pg.beginDraw();
+  pg.background(0);
+
+  //pg.translate(0,height/2);
+  //pg.rotateX(radians(sin(t)*65));
+  //pg.translate(0,-height/2);
+ 
+  for (int i = 0; i < width; i+=15) {
+
+    pontos.add(new PVector(
+      sin(i*0.22+t)*width,
+      sin(i*0.13+t)*height,
+      -450+noise(i*0.03+t)*420));  
+           
+  }
+
+pg.beginShape(LINES);
+
+
+  for (PVector p : pontos) {
+
+    color c = img.get(int(p.x), int(p.y));
+    float sat = saturation(c);
+    
+    float nx = noise(p.x*0.55+t, p.y*0.23+t)*150;
+    float ny = noise(p.y*0.12+t, p.x*0.53+t)*250;
+    
+    float mx = map(noise(p.x*0.05+t, p.y*0.03+t), 0, width, -1, 1);
+    
+    float z = map(sat, -450, 250, -190, 8);
+    
+    pg.noFill();
+    
+    pg.strokeWeight(0.5);
+    pg.stroke(c, 127+tan(sat*0.01+t)*127);
+    
+    pg.vertex(p.x+nx, p.y+ny, z);
+    pg.vertex(p.x+mx, p.y+mx);
+    
+    
+  }
+
+  pg.endShape();
+  pg.endDraw();
+  image(pg, 0, 0);
+  
+  // if(frameCount == 2104){
+  //  exit();
+  //}
+  //saveFrame("salva2/####.png");
+
+}
+ 
